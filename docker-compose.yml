@@ -1,0 +1,24 @@
+services:
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: eduardofbom-stock-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: eduardofbom_stock
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: America/Maceio
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - stock-network
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  stock-network:
+    driver: bridge
