@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: stock-manager-api
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5433/eduardofbom-stock
+    username: postgres
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+  
+  flyway:
+    enable: true
+    baseline-on-migrate: true
+
+kind: Application
