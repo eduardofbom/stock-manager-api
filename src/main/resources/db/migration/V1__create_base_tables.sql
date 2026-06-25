@@ -1,33 +1,33 @@
 CREATE TABLE categorias (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL
-)
+);
 
 CREATE TABLE fornecedores (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     documento_fiscal VARCHAR(30)
-)
+);
 
 CREATE TABLE usuarios (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     cargo VARCHAR(50) NOT NULL,  -- 'GERENTE', 'OPERADOR'
     ativo BOOLEAN DEFAULT TRUE
     -- Por enquanto sem login (email e senha)
-)
+);
 
 CREATE TABLE fornecedor_contatos (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     fornecedor_id INTEGER NOT NULL,
     tipo VARCHAR(50) NOT NULL,       -- 'Telefone', 'E-mail', 'WhatsApp', 'Celular'
     valor VARCHAR(255) NOT NULL,     -- número ou e-mail
     nome_contato VARCHAR(100),         -- Nome da pessoa física (ex: 'Fulano do Financeiro')
     CONSTRAINT fk_fornecedor_contato FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
-)
+);
 
 CREATE TABLE produtos (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     categoria_id INTEGER NOT NULL,
     cod_barras CHAR(13),
@@ -37,10 +37,10 @@ CREATE TABLE produtos (
     preco_venda NUMERIC(10,2) NOT NULL,
     ativo BOOLEAN DEFAULT TRUE,
     CONSTRAINT fk_produto_categoria FOREIGN KEY (categoria_id) REFERENCES categorias(id)
-)
+);
 
 CREATE TABLE lotes (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     produto_id INTEGER NOT NULL,
     fornecedor_id INTEGER NOT NULL,
     lancamento TIMESTAMP  DEFAULT NOW(),
@@ -51,10 +51,10 @@ CREATE TABLE lotes (
     status VARCHAR(20) DEFAULT 'ATIVO',  -- 'ATIVO', 'ESGOTADO', 'VENCIDO', 'DESCARTADO'
     CONSTRAINT fk_lote_produto FOREIGN KEY (produto_id) REFERENCES produtos(id),
     CONSTRAINT fk_lote_fornecedor FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
-)
+);
 
 CREATE TABLE movimentacoes_estoque (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     lote_id INTEGER NOT NULL,
     usuario_id INTEGER,
     data_movimentacao TIMESTAMP DEFAULT NOW(),
@@ -63,4 +63,4 @@ CREATE TABLE movimentacoes_estoque (
     descricao TEXT,
     CONSTRAINT fk_movimentacao_lote FOREIGN KEY (lote_id) REFERENCES lotes(id),
     CONSTRAINT fk_movimentacao_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-)
+);
