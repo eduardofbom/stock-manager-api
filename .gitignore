@@ -25,3 +25,6 @@ replay_pid*
 
 # environment variables (passwords and local keys)
 .env
+
+#
+target/
