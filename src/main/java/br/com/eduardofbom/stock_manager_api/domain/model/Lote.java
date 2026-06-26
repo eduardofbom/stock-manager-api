@@ -50,15 +50,16 @@ public class Lote {
     @Column(nullable = false, length = 20)
     private StatusLote status = StatusLote.ATIVO;
 
-    public Lote(Produto produto, Fornecedor fornecedor, LocalDateTime lancamento, BigDecimal quantInicial, BigDecimal quantDisponivel, BigDecimal custoUnid, LocalDate validade, StatusLote status) {
+    // Usar apenas se precisar instanciar o lote manualmente
+    public Lote(Produto produto, Fornecedor fornecedor, BigDecimal quantidade, BigDecimal custoUnid, LocalDate validade) {
         this.produto = produto;
         this.fornecedor = fornecedor;
-        this.lancamento = lancamento;
-        this.quantInicial = quantInicial;
-        this.quantDisponivel = quantDisponivel;
+        this.lancamento = LocalDateTime.now();
+        this.quantInicial = quantidade;
+        this.quantDisponivel = quantidade;
         this.custoUnid = custoUnid;
         this.validade = validade;
-        this.status = status;
+        this.status = StatusLote.ATIVO;
     }
 
     protected Lote() {
