@@ -30,8 +30,8 @@ CREATE TABLE produtos (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     categoria_id INTEGER NOT NULL,
-    cod_barras CHAR(13),
-    unid_medida CHAR(2) NOT NULL,  -- 'KG' ou 'UN'
+    cod_barras VARCHAR(13),
+    unid_medida VARCHAR(2) NOT NULL,  -- 'KG' ou 'UN'
     estoq_min NUMERIC(10,3) NOT NULL,
     quant_atual NUMERIC(10,3) DEFAULT 0.000,  -- ATUALIZAR COM TRANSACTION (usar como cache)
     preco_venda NUMERIC(10,2) NOT NULL,
