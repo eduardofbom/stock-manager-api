@@ -4,5 +4,6 @@ public enum StatusLote {
     ATIVO,
     ESGOTADO,
     VENCIDO,
+    DESCARTADO,
     BLOQUEADO
 }
