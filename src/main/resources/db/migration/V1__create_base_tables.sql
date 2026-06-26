@@ -19,7 +19,7 @@ CREATE TABLE usuarios (
 
 CREATE TABLE fornecedor_contatos (
     id BIGSERIAL PRIMARY KEY,
-    fornecedor_id INTEGER NOT NULL,
+    fornecedor_id BIGINT NOT NULL,
     tipo VARCHAR(50) NOT NULL,       -- 'Telefone', 'E-mail', 'WhatsApp', 'Celular'
     valor VARCHAR(255) NOT NULL,     -- número ou e-mail
     nome_contato VARCHAR(100),         -- Nome da pessoa física (ex: 'Fulano do Financeiro')
@@ -29,7 +29,7 @@ CREATE TABLE fornecedor_contatos (
 CREATE TABLE produtos (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    categoria_id INTEGER NOT NULL,
+    categoria_id BIGINT NOT NULL,
     cod_barras VARCHAR(13),
     unid_medida VARCHAR(2) NOT NULL,  -- 'KG' ou 'UN'
     estoq_min NUMERIC(10,3) NOT NULL,
@@ -41,8 +41,8 @@ CREATE TABLE produtos (
 
 CREATE TABLE lotes (
     id BIGSERIAL PRIMARY KEY,
-    produto_id INTEGER NOT NULL,
-    fornecedor_id INTEGER NOT NULL,
+    produto_id BIGINT NOT NULL,
+    fornecedor_id BIGINT NOT NULL,
     lancamento TIMESTAMP  DEFAULT NOW(),
     quant_inicial NUMERIC(10,3) NOT NULL,  -- Imutável, registrada na entrada
     quant_disponivel NUMERIC(10,3) NOT NULL,  -- ariável, onde ocorre a baixa de estoque
@@ -55,8 +55,8 @@ CREATE TABLE lotes (
 
 CREATE TABLE movimentacoes_estoque (
     id BIGSERIAL PRIMARY KEY,
-    lote_id INTEGER NOT NULL,
-    usuario_id INTEGER,
+    lote_id BIGINT NOT NULL,
+    usuario_id BIGINT,
     data_movimentacao TIMESTAMP DEFAULT NOW(),
     quantidade NUMERIC(10,3) NOT NULL,   -- Positiva (entrada/ajuste) ou Negativa (venda/perda)
     tipo VARCHAR(30) NOT NULL,   -- 'VENDA', 'ENTRADA_COMPRA', 'DESCARTE_VENCIDO', 'AVARIA', 'AJUSTE_MANUAL'
