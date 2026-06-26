@@ -33,6 +33,6 @@ public class Categoria {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return getClass().hashCode();
     }
 }

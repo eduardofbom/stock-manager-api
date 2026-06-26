@@ -77,6 +77,6 @@ public class Lote {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return getClass().hashCode();
     }
 }
