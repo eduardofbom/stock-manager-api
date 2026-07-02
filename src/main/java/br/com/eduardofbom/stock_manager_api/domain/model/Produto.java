@@ -47,6 +47,15 @@ public class Produto {
     protected Produto() {
     }
 
+    public Produto(String nome, Categoria categoria, String unidMedida, BigDecimal precoVenda) {
+        this.nome = nome;
+        this.categoria = categoria;
+        this.unidMedida = unidMedida;
+        this.precoVenda = precoVenda;
+        this.quantAtual = BigDecimal.ZERO;
+        this.ativo = true;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

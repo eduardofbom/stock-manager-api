@@ -25,6 +25,11 @@ public class Fornecedor {
     protected Fornecedor() {
     }
 
+    public Fornecedor(String nome, String documentoFiscal) {
+        this.nome = nome;
+        this.documentoFiscal = documentoFiscal;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -20,6 +20,10 @@ public class Categoria {
     protected Categoria() {
     }
 
+    public Categoria(String nome) {
+        this.nome = nome;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
