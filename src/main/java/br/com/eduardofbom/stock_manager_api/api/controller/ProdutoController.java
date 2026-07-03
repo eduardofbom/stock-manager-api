@@ -2,6 +2,7 @@ package br.com.eduardofbom.stock_manager_api.api.controller;
 
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoRequestDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoResponseDTO;
+import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoUpdateDTO;
 import br.com.eduardofbom.stock_manager_api.domain.service.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,17 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public ResponseEntity<ProdutoResponseDTO> criar (@RequestBody @Valid ProdutoRequestDTO produtoRequestDTO) {
+    public ResponseEntity<ProdutoResponseDTO> criar(@RequestBody @Valid ProdutoRequestDTO produtoRequestDTO) {
         ProdutoResponseDTO produtoCriado = produtoService.criar(produtoRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoCriado);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProdutoResponseDTO> atualizar (
+            @PathVariable Long id,
+            @RequestBody @Valid ProdutoUpdateDTO produtoUpdateDTO) {
+        ProdutoResponseDTO produtoAtualizado = produtoService.atualizar(id, produtoUpdateDTO);
+        return ResponseEntity.ok(produtoAtualizado);
+    }
+
 }
