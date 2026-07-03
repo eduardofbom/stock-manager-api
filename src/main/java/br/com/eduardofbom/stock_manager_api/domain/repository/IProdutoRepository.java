@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface IProdutoRepository extends JpaRepository<Produto, Long> {
-    @Query("SELECT p FROM Produto p JOIN FETCH p.categoria")
+    @Query("SELECT p FROM Produto p JOIN FETCH p.categoria WHERE p.ativo = true")
     List<Produto> buscarTodosComCategoria();
 }
