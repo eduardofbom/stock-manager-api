@@ -41,4 +41,9 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoAtualizado);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> inativar(@PathVariable Long id) {
+        produtoService.inativar(id);
+        return ResponseEntity.noContent().build();
+    }
 }

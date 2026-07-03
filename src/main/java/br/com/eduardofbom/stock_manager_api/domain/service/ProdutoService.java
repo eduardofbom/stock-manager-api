@@ -71,4 +71,13 @@ public class ProdutoService {
         return new ProdutoResponseDTO(produtoExistente);
     }
 
+    @Transactional
+    public void inativar(Long id) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com o ID: " + id));
+
+        produto.setAtivo(false);
+        produtoRepository.save(produto);
+    }
+
 }
