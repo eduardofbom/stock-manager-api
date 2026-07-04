@@ -9,7 +9,6 @@ import br.com.eduardofbom.stock_manager_api.domain.repository.IProdutoRepository
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,9 +17,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,6 +73,26 @@ public class ProdutoServiceTest {
 
         verify(categoriaRepository, times(1)).findById(categoriaId);
         verify(produtoRepository, times(1)).save(any(Produto.class));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção e abortar salvamento quando a categoria não for encontrada")
+    void deveLancarExcecaoEAbortarSalvamentoQuandoCategoriaNaoEncontrada() {
+        Long idInexistente = 99L;
+        ProdutoRequestDTO produtoRequestDTO = new ProdutoRequestDTO(
+                "Sprinte 2L", "789123457", "UN",
+                new BigDecimal("10.000"), new BigDecimal("7.50"),
+                idInexistente
+        );
+
+        when(categoriaRepository.findById(idInexistente)).thenReturn(Optional.empty());
+
+        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.criar(produtoRequestDTO));
+
+        assertTrue(excecao.getMessage().contains("Categoria não encontrada com o ID: " + idInexistente));
+
+        verify(produtoRepository, never()).save(any(Produto.class));
+        verify(categoriaRepository, times(1)).findById(idInexistente);
     }
 
 }
