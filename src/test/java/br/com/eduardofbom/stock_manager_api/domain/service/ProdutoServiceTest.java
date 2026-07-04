@@ -1,0 +1,81 @@
+package br.com.eduardofbom.stock_manager_api.domain.service;
+
+import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoRequestDTO;
+import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoResponseDTO;
+import br.com.eduardofbom.stock_manager_api.domain.model.Categoria;
+import br.com.eduardofbom.stock_manager_api.domain.model.Produto;
+import br.com.eduardofbom.stock_manager_api.domain.repository.ICategoriaRepository;
+import br.com.eduardofbom.stock_manager_api.domain.repository.IProdutoRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+public class ProdutoServiceTest {
+
+    @Mock
+    private IProdutoRepository produtoRepository;
+
+    @Mock
+    private ICategoriaRepository categoriaRepository;
+
+    @InjectMocks
+    private ProdutoService produtoService;
+
+    @Test
+    @DisplayName("Deve criar um produto com sucesso quando a categoria informada existir")
+    void deveCriarProdutoComSucessoQuandoCategoriaExistir() {
+        Long categoriaId = 1L;
+        Categoria categoriaFake = new Categoria("Bebidas");
+
+        ProdutoRequestDTO produtoRequestDTO = new ProdutoRequestDTO(
+                "Coca-Cola 2L", "789123456", "UN",
+                new BigDecimal("10.000"), new BigDecimal("8.50"), categoriaId
+        );
+
+        Produto produtoSalvoFake = new Produto(
+                produtoRequestDTO.nome(), categoriaFake, produtoRequestDTO.unidMedida(),
+                produtoRequestDTO.precoVenda()
+        );
+        produtoSalvoFake.setCodBarras(produtoRequestDTO.codBarras());
+        produtoSalvoFake.setEstoqMin(produtoRequestDTO.estoqMin());
+
+        Field idField;
+        try {
+            idField = Produto.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(produtoSalvoFake, 100L);
+        } catch (Exception e) {
+            fail("Falha ao injetar ID de teste via reflexão");
+        }
+
+        when(categoriaRepository.findById(categoriaId)).thenReturn(Optional.of(categoriaFake));
+        when(produtoRepository.save(any(Produto.class))).thenReturn(produtoSalvoFake);
+
+        ProdutoResponseDTO response = produtoService.criar(produtoRequestDTO);
+
+        assertNotNull(response);
+        assertEquals(100L, response.id());
+        assertEquals("Coca-Cola 2L", response.nome());
+        assertEquals("789123456", response.codBarras());
+        assertEquals("Bebidas", response.categoriaName());
+        assertEquals(BigDecimal.ZERO, response.quantAtual());
+
+        verify(categoriaRepository, times(1)).findById(categoriaId);
+        verify(produtoRepository, times(1)).save(any(Produto.class));
+    }
+
+}
