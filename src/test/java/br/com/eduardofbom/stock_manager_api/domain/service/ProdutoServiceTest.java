@@ -154,4 +154,28 @@ public class ProdutoServiceTest {
         verify(categoriaRepository, never()).findById(anyLong());
         verify(produtoRepository, never()).save(any(Produto.class));
     }
+
+    @Test
+    @DisplayName("Deve lançar exceção e abortar ao tentar atualizar produto com nova categoria inexistente")
+    void deveLancarExcecaoAoAtualizarProdutoComCategoriaInexistente() {
+        Long produtoExistenteId = 100L;
+        Long categoriaInexistenteId = 999L;
+
+        Produto produtoExistente = new Produto("Fanta Laranja", new Categoria("Bebidas"),
+                "UN", new BigDecimal("5.00"));
+        ProdutoUpdateDTO produtoUpdateDTO = new ProdutoUpdateDTO("Fanta Uva", new BigDecimal("10.000"),
+                new BigDecimal("6.50"), categoriaInexistenteId);
+
+        when(produtoRepository.findById(produtoExistenteId)).thenReturn(Optional.of(produtoExistente));
+        when(categoriaRepository.findById(categoriaInexistenteId)).thenReturn(Optional.empty());
+
+        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class,
+                () -> produtoService.atualizar(produtoExistenteId, produtoUpdateDTO));
+
+        assertTrue(excecao.getMessage().contains("Categoria não encontrada com o ID: " + categoriaInexistenteId));
+
+        verify(produtoRepository, times(1)).findById(produtoExistenteId);
+        verify(categoriaRepository, times(1)).findById(categoriaInexistenteId);
+        verify(produtoRepository, never()).save(any(Produto.class));
+    }
 }
