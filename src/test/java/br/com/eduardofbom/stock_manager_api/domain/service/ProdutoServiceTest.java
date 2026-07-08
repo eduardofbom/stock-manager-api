@@ -134,4 +134,24 @@ public class ProdutoServiceTest {
         verify(categoriaRepository, times(1)).findById(novaCategoriaId);
         verify(produtoRepository, times(1)).save(produtoExistente);
     }
+
+    @Test
+    @DisplayName("Deve lançar exceção e abortar ao tentar atualizar produto inexistente")
+    void deveLancarExcecaoAoAtualizarProdutoInexistente() {
+        Long produtoInexistenteId = 999L;
+        ProdutoUpdateDTO produtoUpdateDTO = new ProdutoUpdateDTO(
+                "Fanta Uva 2L", new BigDecimal("10.000"),
+                new BigDecimal("6.50"), 1L
+        );
+
+        when(produtoRepository.findById(produtoInexistenteId)).thenReturn(Optional.empty());
+
+        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class,
+                () -> produtoService.atualizar(produtoInexistenteId, produtoUpdateDTO));
+
+        assertTrue(excecao.getMessage().contains("Produto não encontrado com o ID: " + produtoInexistenteId));
+
+        verify(categoriaRepository, never()).findById(anyLong());
+        verify(produtoRepository, never()).save(any(Produto.class));
+    }
 }
