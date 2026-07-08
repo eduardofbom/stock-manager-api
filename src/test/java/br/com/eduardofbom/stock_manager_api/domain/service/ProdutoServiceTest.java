@@ -2,6 +2,7 @@ package br.com.eduardofbom.stock_manager_api.domain.service;
 
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoRequestDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoResponseDTO;
+import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoUpdateDTO;
 import br.com.eduardofbom.stock_manager_api.domain.model.Categoria;
 import br.com.eduardofbom.stock_manager_api.domain.model.Produto;
 import br.com.eduardofbom.stock_manager_api.domain.repository.ICategoriaRepository;
@@ -95,4 +96,42 @@ public class ProdutoServiceTest {
         verify(categoriaRepository, times(1)).findById(idInexistente);
     }
 
+    @Test
+    @DisplayName("Deve atualizar um produto com sucesso quando produto e categoria existirem")
+    void deveAtualizarProdutoComSucesso() {
+        Long produtoId = 100L;
+        Long novaCategoriaId = 2L;
+
+        Categoria categoriaAntiga = new Categoria("Bebidas");
+        Categoria categoriaNova = new Categoria("Alimentos");
+
+        Produto produtoExistente = new Produto(
+                "Fanta Laranja 2L", categoriaAntiga, "UN",
+                new BigDecimal("5.00")
+        );
+        produtoExistente.setCodBarras("111111111");
+        produtoExistente.setEstoqMin(new BigDecimal("10.000"));
+
+        ProdutoUpdateDTO produtoUpdateDTO = new ProdutoUpdateDTO(
+                "Fanta Uva 2L", new BigDecimal("10.000"),
+                new BigDecimal("6.50"), novaCategoriaId
+        );
+
+        when(produtoRepository.findById(produtoId)).thenReturn(Optional.of(produtoExistente));
+        when(categoriaRepository.findById(novaCategoriaId)).thenReturn(Optional.of(categoriaNova));
+        when(produtoRepository.save(any(Produto.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ProdutoResponseDTO response = produtoService.atualizar(produtoId, produtoUpdateDTO);
+
+        assertNotNull(response);
+        assertEquals("Fanta Uva 2L", response.nome());
+        assertEquals("Alimentos", response.categoriaName());
+        assertEquals(new BigDecimal("6.50"), response.precoVenda());
+        assertEquals("111111111", response.codBarras());  // nao pode ser alterado em uma atualizacao
+        assertEquals(BigDecimal.ZERO, response.quantAtual());  // nao pode ser alterado em uma atualizacao
+
+        verify(produtoRepository, times(1)).findById(produtoId);
+        verify(categoriaRepository, times(1)).findById(novaCategoriaId);
+        verify(produtoRepository, times(1)).save(produtoExistente);
+    }
 }
