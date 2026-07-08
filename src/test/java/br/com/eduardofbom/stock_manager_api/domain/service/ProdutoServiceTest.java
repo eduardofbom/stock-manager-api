@@ -197,4 +197,20 @@ public class ProdutoServiceTest {
         verify(produtoRepository, times(1)).findById(produtoExistenteId);
         verify(produtoRepository,times(1)).save(produtoExistente);
     }
+
+    @Test
+    @DisplayName("Deve lançar exceção e abortar ao tentar inativar produto inexistente")
+    void deveLancarExcecaoAoInativarProdutoInexistente() {
+        Long produtoInexistenteId = 999L;
+
+        when(produtoRepository.findById(produtoInexistenteId)).thenReturn(Optional.empty());
+
+        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class,
+                () -> produtoService.inativar(produtoInexistenteId));
+
+        assertTrue(excecao.getMessage().contains("Produto não encontrado com o ID: " + produtoInexistenteId));
+
+        verify(produtoRepository, times(1)).findById(produtoInexistenteId);
+        verify(produtoRepository, never()).save(any(Produto.class));
+    }
 }
