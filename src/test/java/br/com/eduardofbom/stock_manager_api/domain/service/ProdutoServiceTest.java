@@ -178,4 +178,23 @@ public class ProdutoServiceTest {
         verify(categoriaRepository, times(1)).findById(categoriaInexistenteId);
         verify(produtoRepository, never()).save(any(Produto.class));
     }
+
+    @Test
+    @DisplayName("Deve inativar o produto com sucesso mudando status para false")
+    void deveInativarProdutoComSucesso() {
+        Long produtoExistenteId = 1L;
+        Produto produtoExistente = new Produto("Fanta Laranja", new Categoria("Bebidas"),
+                "UN", new BigDecimal("5.00"));
+
+        assertTrue(produtoExistente.getAtivo(), "Garantia inicial de que o produto está ativo");
+
+        when(produtoRepository.findById(produtoExistenteId)).thenReturn(Optional.of(produtoExistente));
+
+        produtoService.inativar(produtoExistenteId);
+
+        assertFalse(produtoExistente.getAtivo(), "O status do produto deve ser false após a inativação");
+
+        verify(produtoRepository, times(1)).findById(produtoExistenteId);
+        verify(produtoRepository,times(1)).save(produtoExistente);
+    }
 }
