@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -22,12 +24,21 @@ public class Fornecedor {
     @Column(name = "documento_fiscal", length = 30)
     private String documentoFiscal;
 
+    @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FornecedorContato> contatos = new ArrayList<>();
+
     protected Fornecedor() {
     }
 
     public Fornecedor(String nome, String documentoFiscal) {
         this.nome = nome;
         this.documentoFiscal = documentoFiscal;
+    }
+
+    // Sincronizacao essencial para o JPA
+    public void adicionarContato(FornecedorContato contato) {
+        contatos.add(contato);
+        contato.setFornecedor(this);
     }
 
     @Override
