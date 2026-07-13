@@ -3,6 +3,8 @@ package br.com.eduardofbom.stock_manager_api.domain.service;
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoRequestDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoResponseDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoUpdateDTO;
+import br.com.eduardofbom.stock_manager_api.domain.exception.EntidadeNaoEncontradaException;
+import br.com.eduardofbom.stock_manager_api.domain.exception.RegraNegocioException;
 import br.com.eduardofbom.stock_manager_api.domain.model.Categoria;
 import br.com.eduardofbom.stock_manager_api.domain.model.Produto;
 import br.com.eduardofbom.stock_manager_api.domain.repository.ICategoriaRepository;
@@ -34,7 +36,7 @@ public class ProdutoService {
     @Transactional
     public ProdutoResponseDTO criar(ProdutoRequestDTO produtoRequestDTO) {
         Categoria categoria = categoriaRepository.findById(produtoRequestDTO.categoriaId())
-                .orElseThrow(() -> new IllegalArgumentException(
+                .orElseThrow(() -> new RegraNegocioException(
                         "Não é possível cadastrar o produto. Categoria não encontrada com o ID: "
                         + produtoRequestDTO.categoriaId()
                 ));
@@ -56,10 +58,10 @@ public class ProdutoService {
     @Transactional
     public ProdutoResponseDTO atualizar(Long id, ProdutoUpdateDTO produtoUpdateDTO) {
         Produto produtoExistente = produtoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com o ID: " + id));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado com o ID: " + id));
 
         Categoria categoriaExistente = categoriaRepository.findById(produtoUpdateDTO.categoriaId())
-                .orElseThrow(() -> new IllegalArgumentException("Categoria não encontrada com o ID: " + produtoUpdateDTO.categoriaId()));
+                .orElseThrow(() -> new RegraNegocioException("Categoria não encontrada com o ID: " + produtoUpdateDTO.categoriaId()));
 
         produtoExistente.setNome(produtoUpdateDTO.nome());
         produtoExistente.setEstoqMin(produtoUpdateDTO.estoqMin());
@@ -74,7 +76,7 @@ public class ProdutoService {
     @Transactional
     public void inativar(Long id) {
         Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com o ID: " + id));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado com o ID: " + id));
 
         produto.setAtivo(false);
         produtoRepository.save(produto);

@@ -3,6 +3,8 @@ package br.com.eduardofbom.stock_manager_api.domain.service;
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoRequestDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoResponseDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.ProdutoUpdateDTO;
+import br.com.eduardofbom.stock_manager_api.domain.exception.EntidadeNaoEncontradaException;
+import br.com.eduardofbom.stock_manager_api.domain.exception.RegraNegocioException;
 import br.com.eduardofbom.stock_manager_api.domain.model.Categoria;
 import br.com.eduardofbom.stock_manager_api.domain.model.Produto;
 import br.com.eduardofbom.stock_manager_api.domain.repository.ICategoriaRepository;
@@ -88,7 +90,7 @@ public class ProdutoServiceTest {
 
         when(categoriaRepository.findById(idInexistente)).thenReturn(Optional.empty());
 
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.criar(produtoRequestDTO));
+        RegraNegocioException excecao = assertThrows(RegraNegocioException.class, () -> produtoService.criar(produtoRequestDTO));
 
         assertTrue(excecao.getMessage().contains("Categoria não encontrada com o ID: " + idInexistente));
 
@@ -146,7 +148,7 @@ public class ProdutoServiceTest {
 
         when(produtoRepository.findById(produtoInexistenteId)).thenReturn(Optional.empty());
 
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class,
+        EntidadeNaoEncontradaException excecao = assertThrows(EntidadeNaoEncontradaException.class,
                 () -> produtoService.atualizar(produtoInexistenteId, produtoUpdateDTO));
 
         assertTrue(excecao.getMessage().contains("Produto não encontrado com o ID: " + produtoInexistenteId));
@@ -169,7 +171,7 @@ public class ProdutoServiceTest {
         when(produtoRepository.findById(produtoExistenteId)).thenReturn(Optional.of(produtoExistente));
         when(categoriaRepository.findById(categoriaInexistenteId)).thenReturn(Optional.empty());
 
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class,
+        RegraNegocioException excecao = assertThrows(RegraNegocioException.class,
                 () -> produtoService.atualizar(produtoExistenteId, produtoUpdateDTO));
 
         assertTrue(excecao.getMessage().contains("Categoria não encontrada com o ID: " + categoriaInexistenteId));
@@ -205,7 +207,7 @@ public class ProdutoServiceTest {
 
         when(produtoRepository.findById(produtoInexistenteId)).thenReturn(Optional.empty());
 
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class,
+        EntidadeNaoEncontradaException excecao = assertThrows(EntidadeNaoEncontradaException.class,
                 () -> produtoService.inativar(produtoInexistenteId));
 
         assertTrue(excecao.getMessage().contains("Produto não encontrado com o ID: " + produtoInexistenteId));
