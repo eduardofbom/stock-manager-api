@@ -31,6 +31,13 @@ public class FornecedorContato {
     protected FornecedorContato() {
     }
 
+    // Usar apenas quando instanciacao manual necessaria (ex: Mock de teste)
+    public FornecedorContato(TiposContato tipo, String valor, String nomeContato) {
+        this.tipo = tipo;
+        this.valor = valor;
+        this.nomeContato = nomeContato;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
