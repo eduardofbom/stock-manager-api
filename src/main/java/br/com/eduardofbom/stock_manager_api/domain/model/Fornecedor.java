@@ -27,6 +27,9 @@ public class Fornecedor {
     @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FornecedorContato> contatos = new ArrayList<>();
 
+    @Column(nullable = false)
+    private boolean ativo = true;
+
     protected Fornecedor() {
     }
 

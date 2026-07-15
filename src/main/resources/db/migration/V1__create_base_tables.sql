@@ -6,7 +6,8 @@ CREATE TABLE categorias (
 CREATE TABLE fornecedores (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    documento_fiscal VARCHAR(30)
+    documento_fiscal VARCHAR(30),
+    ativo BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE usuarios (
