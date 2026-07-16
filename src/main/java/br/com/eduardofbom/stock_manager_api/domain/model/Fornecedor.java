@@ -21,7 +21,7 @@ public class Fornecedor {
     @Column(nullable = false, length = 255)
     private String nome;
 
-    @Column(name = "documento_fiscal", length = 30)
+    @Column(name = "documento_fiscal", length = 30, unique = true)
     private String documentoFiscal;
 
     @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL, orphanRemoval = true)
