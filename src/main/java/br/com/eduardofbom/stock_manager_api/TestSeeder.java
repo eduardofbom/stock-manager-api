@@ -9,12 +9,14 @@ import br.com.eduardofbom.stock_manager_api.domain.repository.IProdutoRepository
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Component
+@Profile("!test")
 public class TestSeeder implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(TestSeeder.class);
@@ -48,6 +50,7 @@ public class TestSeeder implements CommandLineRunner {
                     "UN",
                     new BigDecimal("8.50"));
             produtoRepository.save(refrigerante);
+            refrigerante.setEstoqMin(new BigDecimal("5.00"));
 
             log.info("Dados inseridos com sucesso!");
         }
