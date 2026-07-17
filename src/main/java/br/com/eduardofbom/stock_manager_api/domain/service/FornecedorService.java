@@ -3,6 +3,7 @@ package br.com.eduardofbom.stock_manager_api.domain.service;
 import br.com.eduardofbom.stock_manager_api.api.dto.FornecedorContatoResponseDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.FornecedorRequestDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.FornecedorResponseDTO;
+import br.com.eduardofbom.stock_manager_api.domain.exception.RegraNegocioException;
 import br.com.eduardofbom.stock_manager_api.domain.model.Fornecedor;
 import br.com.eduardofbom.stock_manager_api.domain.model.FornecedorContato;
 import br.com.eduardofbom.stock_manager_api.domain.repository.IFornecedorRepository;
@@ -20,6 +21,13 @@ public class FornecedorService {
 
     @Transactional
     public FornecedorResponseDTO criar(FornecedorRequestDTO fornecedorRequestDTO) {
+        fornecedorRepository.findByDocumentoFiscal(fornecedorRequestDTO.documentoFiscal())
+                .ifPresent(fornecedorExistente -> {
+                    throw new RegraNegocioException(
+                            "Já existe um fornecedor cadastrado com este documento fiscal."
+                    );
+                });
+
         Fornecedor fornecedor = new Fornecedor(
                 fornecedorRequestDTO.nome(),
                 fornecedorRequestDTO.documentoFiscal()

@@ -4,6 +4,7 @@ import br.com.eduardofbom.stock_manager_api.api.dto.FornecedorContatoRequestDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.FornecedorContatoResponseDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.FornecedorRequestDTO;
 import br.com.eduardofbom.stock_manager_api.api.dto.FornecedorResponseDTO;
+import br.com.eduardofbom.stock_manager_api.domain.exception.RegraNegocioException;
 import br.com.eduardofbom.stock_manager_api.domain.model.Fornecedor;
 import br.com.eduardofbom.stock_manager_api.domain.model.FornecedorContato;
 import br.com.eduardofbom.stock_manager_api.domain.model.TiposContato;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -96,6 +98,32 @@ public class FornecedorServiceTest {
         assertEquals("Suporte Logístico",segundoContato.nomeContato());
 
         verify(fornecedorRepository, times(1)).save(any(Fornecedor.class));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção e abortar ao tentar criar fornecedor com documento já existente")
+    void deveLancarExcecaoAoCriarFornecedorComDocumentoDuplicado() {
+        String documentoDuplicado = "12.345.678/0001-09";
+        FornecedorRequestDTO requestDTO = new FornecedorRequestDTO(
+                "Nova Empresa XYZ", documentoDuplicado, null
+        );
+
+        Fornecedor fornecedorExistente = new Fornecedor(
+                "Empresa Antiga ABC",
+                documentoDuplicado
+        );
+        injetarId(fornecedorExistente, 99L);
+
+        when(fornecedorRepository.findByDocumentoFiscal(documentoDuplicado)).thenReturn(Optional.of(fornecedorExistente));
+
+        RegraNegocioException excecao = assertThrows(
+                RegraNegocioException.class,
+                () -> fornecedorService.criar(requestDTO)
+        );
+
+        assertEquals("Já existe um fornecedor cadastrado com este documento fiscal.", excecao.getMessage());
+
+        verify(fornecedorRepository, never()).save(any(Fornecedor.class));
     }
 
     private void injetarId(Object objeto, Long id) {
